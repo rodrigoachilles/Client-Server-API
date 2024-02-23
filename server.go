@@ -58,8 +58,6 @@ func main() {
 }
 
 func serverHandler(res http.ResponseWriter, req *http.Request) {
-	//Usando o package "context", o server.go deverá registrar no banco de dados SQLite cada cotação recebida, sendo que o timeout máximo para chamar a API de cotação do dóla deverá ser de 200ms e o timeout máximo para conseguir persistir os dados no banco deverá ser de 10ms.
-
 	if req.URL.Path != "/cotacao" {
 		res.WriteHeader(http.StatusNotFound)
 		WarningLoggerServer.Println("Path [" + req.URL.Path + "] not found!")
