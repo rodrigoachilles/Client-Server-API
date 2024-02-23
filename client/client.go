@@ -13,26 +13,26 @@ import (
 const hostServer = "http://localhost:8080"
 const resourceCotacao = "/cotacao"
 
-type DollarRateClient struct {
+type Rate struct {
 	Dollar string `json:"dollar"`
 }
 
 var (
-	InfoLoggerClient  *log.Logger
-	ErrorLoggerClient *log.Logger
+	InfoLogger  *log.Logger
+	ErrorLogger *log.Logger
 )
 
 func init() {
-	InfoLoggerClient = log.New(os.Stdout, "INFO    | ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-	ErrorLoggerClient = log.New(os.Stdout, "ERROR   | ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+	InfoLogger = log.New(os.Stdout, "INFO    | ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+	ErrorLogger = log.New(os.Stdout, "ERROR   | ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 }
 
 func main() {
-	InfoLoggerClient.Println("Starting client...")
+	InfoLogger.Println("Starting client...")
 
 	dollar, err := findDollarRateInServer()
 	if err != nil {
-		ErrorLoggerClient.Println(err)
+		ErrorLogger.Println(err)
 		return
 	}
 
@@ -40,7 +40,7 @@ func main() {
 }
 
 func findDollarRateInServer() (string, error) {
-	InfoLoggerClient.Println("Finding Dollar Rate in the server => url : " + hostServer + resourceCotacao)
+	InfoLogger.Println("Finding Dollar Rate in the server => url : " + hostServer + resourceCotacao)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
 	defer cancel()
@@ -56,15 +56,15 @@ func findDollarRateInServer() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var dollarRateClient DollarRateClient
-	_ = json.Unmarshal(body, &dollarRateClient)
+	var rate Rate
+	_ = json.Unmarshal(body, &rate)
 	_ = res.Body.Close()
-	return dollarRateClient.Dollar, nil
+	return rate.Dollar, nil
 }
 
 func saveInFile(dollar string) {
-	InfoLoggerClient.Println("Saving in the file 'cotacao.txt'...")
-	InfoLoggerClient.Println("Dollar:", dollar)
+	InfoLogger.Println("Saving in the file 'cotacao.txt'...")
+	InfoLogger.Println("Dollar:", dollar)
 
 	f, err := os.Create("cotacao.txt")
 	if err != nil {
